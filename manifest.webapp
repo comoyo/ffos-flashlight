@@ -1,0 +1,15 @@
+{
+  "name": "Flashlight",
+  "type": "certified",
+  "description": "Make the flash light man",
+  "launch_path": "/index.html",
+  "developer": {
+    "name": "Telenor Digital",
+    "url": "http://telenordigital.com"
+  },
+  "permissions": {
+    "camera": {
+      "description": "Required for flashing your light"
+    }
+  }
+}
