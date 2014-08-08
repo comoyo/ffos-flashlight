@@ -31,6 +31,8 @@
 })(function(camera) {
   var state = camera.flashMode;
   var toggleButton = document.querySelector('#toggle');
+  var st;
+
   document.body.classList.remove('loading');
 
   toggleButton.classList.toggle('on', state === 'torch');
@@ -38,11 +40,16 @@
   toggleButton.ontouchstart = function() {
     toggleButton.classList.toggle('on', state !== 'torch');
 
+    if (st) {
+      clearTimeout(st);
+    }
+
     // add some time to make the effect look better
-    setTimeout(function() {
+    st = setTimeout(function() {
       camera.flashMode = state = camera.flashMode === 'torch' ?
         'off' :
         'torch';
+      toggleButton.classList.toggle('on', state === 'torch');
     }, 100);
   };
 
