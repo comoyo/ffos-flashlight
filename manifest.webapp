@@ -11,5 +11,10 @@
     "camera": {
       "description": "Required for flashing your light"
     }
-  }
+  },
+  "icons": {
+    "128": "/icons/128.png",
+    "48": "/icons/48.png"
+  },
+  "orientation": ["portrait-primary"]
 }

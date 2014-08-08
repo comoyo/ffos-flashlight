@@ -1,14 +1,12 @@
-var camera;
-
-(function() {
+(function loadStuff(done, error) {
   var back = navigator.mozCameras.getListOfCameras().filter(function(c) {
     return c === 'back';
   })[0];
-  
+
   if (!back) {
-    return console.error('Aint no back camera');
+    return error('No back camera found on your device');
   }
-  
+
   navigator.mozCameras.getCamera(back, {
     mode: 'picture',
     recorderProfile: 'jpg',
@@ -17,26 +15,44 @@ var camera;
       height: 288
     }
   }, function(c) {
-    console.log('success', c);
-    window.c = c;
-
     var f = c.capabilities.flashModes;
     if (!f || !f.length) {
-      return console.error('No flash mode');
+      return error('No flash found on your device');
     }
 
     if (f.indexOf('torch') === -1) {
-      return console.error('Omg no torch mode');
+      return error('Flash does not support torch mode');
     }
 
-    camera = c;
-  }, function(err) {
-    console.error('err', err);
+    done(c);
+  }, function() {
+    error('Could not get the camera. Is another application using the camera?');
   });
-})();
+})(function(camera) {
+  var state = camera.flashMode;
+  var toggleButton = document.querySelector('#toggle');
+  document.body.classList.remove('loading');
 
-document.querySelector('#toggle').onclick = function() {
-  camera.flashMode = camera.flashMode === 'torch' ?
-    'off' :
-    'torch';
-};
+  toggleButton.classList.toggle('on', state === 'torch');
+
+  toggleButton.ontouchstart = function() {
+    toggleButton.classList.toggle('on', state !== 'torch');
+
+    // add some time to make the effect look better
+    setTimeout(function() {
+      camera.flashMode = state = camera.flashMode === 'torch' ?
+        'off' :
+        'torch';
+    }, 100);
+  };
+
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      camera.flashMode = 'off';
+      toggleButton.classList.remove('on');
+    }
+  });
+}, function(err) {
+  alert(err);
+  window.close();
+});
