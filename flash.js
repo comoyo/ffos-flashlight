@@ -1,5 +1,11 @@
 (function loadStuff(done, error) {
-  var back = navigator.mozCameras.getListOfCameras().filter(function(c) {
+  var cameraApi = navigator.mozCameras || navigator.mozCamera;
+
+  if (!cameraApi) {
+    return error('Cannot get access to the camera API');
+  }
+
+  var back = cameraApi.getListOfCameras().filter(function(c) {
     return c === 'back';
   })[0];
 
@@ -7,7 +13,7 @@
     return error('No back camera found on your device');
   }
 
-  navigator.mozCameras.getCamera(back, {
+  cameraApi.getCamera(back, {
     mode: 'picture',
     recorderProfile: 'jpg',
     previewSize: {
